@@ -93,52 +93,50 @@ OBH.ts = 1  -- Trueshot cast time
 OBH.tsSlot = nil  -- Trueshot action slot
 OBH.autoSlot = nil
 OBH.asSlot = nil
-OBH.lastTrueshot = 0
-OBH.trueshotBuffer = 0.5  -- 0.1 second buffer
 
--- Modified OBH:Run() function
+-- Function with Multi-Shot and Trueshot
 function OBH:Run()
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
-    if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end  -- Assume "Trueshot" is the correct name
+    if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
+
     if self.next then
         if self:Active(self.name[1]) then self.rf = 1.4 else self.rf = 1 end
         if self:Active(self.name[2]) then self.qs = 1.3 else self.qs = 1 end
         if not self.Quiver then self:GetQuiverSpeed() end
-        self.as = 1 / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))  -- Trueshot cast time is 1s
+        self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
+
         local time = GT()
-        if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 and (time - self.lastTrueshot > self.trueshotBuffer) then
+        if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
-            self.lastTrueshot = time
-            self.next = time + UnitRangedDamage("player")
             return
         end
         CastSpellByName(self.name[4])  -- Multi-Shot
     else
         if not IsCurrentAction(self.autoSlot) then
-            UseAction(self.autoSlot)
+            UseAction(self.autoSlot)  -- Auto Shot
         end
     end
 end
 
--- Modified OBH:Runnomulti() function
+-- Function without Multi-Shot, only Trueshot
 function OBH:Runnomulti()
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
-    if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end  -- Assume "Trueshot" is the correct name
+    if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
+
     if self.next then
         if self:Active(self.name[1]) then self.rf = 1.4 else self.rf = 1 end
         if self:Active(self.name[2]) then self.qs = 1.3 else self.qs = 1 end
         if not self.Quiver then self:GetQuiverSpeed() end
-        self.as = 1 / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))  -- Trueshot cast time is 1s
+        self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
+
         local time = GT()
-        if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 and (time - self.lastTrueshot > self.trueshotBuffer) then
+        if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
-            self.lastTrueshot = time
-            self.next = time + UnitRangedDamage("player")
             return
         end
     else
         if not IsCurrentAction(self.autoSlot) then
-            UseAction(self.autoSlot)
+            UseAction(self.autoSlot)  -- Auto Shot
         end
     end
 end
