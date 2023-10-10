@@ -100,11 +100,12 @@ OBH.autoInProgress = false
 OBH.trueshotBuffer = 0.5  -- 0.5-second buffer
 OBH.lastTrueShotTime = 0
 OBH.trueShotCooldown = 0.5  -- 0.5-second cooldown after Trueshot
+OBH.trueShotCast = false  -- Flag for Trueshot cast
 
 -- Function with Multi-Shot and Trueshot
 function OBH:Run()
     local currentTime = GT()
-    if (currentTime - self.lastTrueShotTime) < self.trueShotCooldown then
+    if OBH.trueShotCast and (currentTime - OBH.lastTrueShotTime) < OBH.trueShotCooldown then
         return
     end
     
@@ -119,8 +120,11 @@ function OBH:Run()
         
         if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
-            self.lastTrueShotTime = currentTime + self.ts  -- Update last Trueshot time
+            OBH.lastTrueShotTime = currentTime
+            OBH.trueShotCast = true
             return
+        else
+            OBH.trueShotCast = false
         end
         CastSpellByName(self.name[4])  -- Multi-Shot
     else
@@ -133,7 +137,7 @@ end
 -- Function without Multi-Shot, only Trueshot
 function OBH:Runnomulti()
     local currentTime = GT()
-    if (currentTime - self.lastTrueShotTime) < self.trueShotCooldown then
+    if OBH.trueShotCast and (currentTime - OBH.lastTrueShotTime) < OBH.trueShotCooldown then
         return
     end
     
@@ -148,8 +152,11 @@ function OBH:Runnomulti()
         
         if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
-            self.lastTrueShotTime = currentTime + self.ts  -- Update last Trueshot time
+            OBH.lastTrueShotTime = currentTime
+            OBH.trueShotCast = true
             return
+        else
+            OBH.trueShotCast = false
         end
     else
         if not IsCurrentAction(self.autoSlot) then
