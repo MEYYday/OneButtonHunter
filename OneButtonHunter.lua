@@ -94,15 +94,19 @@ OBH.tsSlot = nil  -- Trueshot action slot
 OBH.autoSlot = nil
 OBH.asSlot = nil
 
+-- Add a flag for Auto Shot
+OBH.autoInProgress = false
+
 -- Function with Multi-Shot and Trueshot
 function OBH:Run()
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
     if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
 
-    -- Prioritize Auto Shot
-    if not IsCurrentAction(self.autoSlot) then
+    local time = GT()
+    
+    if not IsCurrentAction(self.autoSlot) and not self.autoInProgress then
         UseAction(self.autoSlot)  -- Auto Shot
-        return
+        self.autoInProgress = true
     end
 
     if self.next then
@@ -111,12 +115,13 @@ function OBH:Run()
         if not self.Quiver then self:GetQuiverSpeed() end
         self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
 
-        local time = GT()
         if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
+            self.autoInProgress = false
             return
         end
         CastSpellByName(self.name[4])  -- Multi-Shot
+        self.autoInProgress = false
     end
 end
 
@@ -125,10 +130,11 @@ function OBH:Runnomulti()
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
     if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
 
-    -- Prioritize Auto Shot
-    if not IsCurrentAction(self.autoSlot) then
+    local time = GT()
+
+    if not IsCurrentAction(self.autoSlot) and not self.autoInProgress then
         UseAction(self.autoSlot)  -- Auto Shot
-        return
+        self.autoInProgress = true
     end
 
     if self.next then
@@ -137,10 +143,11 @@ function OBH:Runnomulti()
         if not self.Quiver then self:GetQuiverSpeed() end
         self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
 
-        local time = GT()
         if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
+            self.autoInProgress = false
             return
         end
+        self.autoInProgress = false
     end
 end
