@@ -100,13 +100,14 @@ OBH.autoInProgress = false
 OBH.trueshotBuffer = 0.5  -- 0.5-second buffer
 OBH.lastTrueShotTime = 0
 OBH.trueShotCooldown = 0.5  -- 0.5-second cooldown after Trueshot
-OBH.trueShotCast = false  -- Flag for Trueshot cast
+OBH.trueShotReady = true  -- Flag for Trueshot availability
 
 -- Function with Multi-Shot and Trueshot
 function OBH:Run()
     local currentTime = GT()
-    if OBH.trueShotCast and (currentTime - OBH.lastTrueShotTime) < OBH.trueShotCooldown then
-        return
+    
+    if not OBH.trueShotReady and (currentTime - OBH.lastTrueShotTime) >= OBH.trueShotCooldown then
+        OBH.trueShotReady = true
     end
     
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
@@ -118,13 +119,11 @@ function OBH:Run()
         if not self.Quiver then self:GetQuiverSpeed() end
         self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
         
-        if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 then
+        if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 and OBH.trueShotReady then
             CastSpellByName("Trueshot")
             OBH.lastTrueShotTime = currentTime
-            OBH.trueShotCast = true
+            OBH.trueShotReady = false
             return
-        else
-            OBH.trueShotCast = false
         end
         CastSpellByName(self.name[4])  -- Multi-Shot
     else
@@ -137,8 +136,9 @@ end
 -- Function without Multi-Shot, only Trueshot
 function OBH:Runnomulti()
     local currentTime = GT()
-    if OBH.trueShotCast and (currentTime - OBH.lastTrueShotTime) < OBH.trueShotCooldown then
-        return
+    
+    if not OBH.trueShotReady and (currentTime - OBH.lastTrueShotTime) >= OBH.trueShotCooldown then
+        OBH.trueShotReady = true
     end
     
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
@@ -150,13 +150,11 @@ function OBH:Runnomulti()
         if not self.Quiver then self:GetQuiverSpeed() end
         self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
         
-        if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 then
+        if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 and OBH.trueShotReady then
             CastSpellByName("Trueshot")
             OBH.lastTrueShotTime = currentTime
-            OBH.trueShotCast = true
+            OBH.trueShotReady = false
             return
-        else
-            OBH.trueShotCast = false
         end
     else
         if not IsCurrentAction(self.autoSlot) then
