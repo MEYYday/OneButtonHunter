@@ -94,7 +94,7 @@ OBH.tsSlot = nil  -- Trueshot action slot
 OBH.autoSlot = nil
 OBH.asSlot = nil
 OBH.lastTrueshot = 0
-OBH.trueshotBuffer = 0.1  -- 0.1 second buffer
+OBH.trueshotBuffer = 0.5  -- 0.1 second buffer
 
 -- Modified OBH:Run() function
 function OBH:Run()
