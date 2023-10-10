@@ -99,6 +99,7 @@ function OBH:Run()
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
     if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
 
+    -- Prioritize Auto Shot
     if not IsCurrentAction(self.autoSlot) then
         UseAction(self.autoSlot)  -- Auto Shot
         return
@@ -108,10 +109,10 @@ function OBH:Run()
         if self:Active(self.name[1]) then self.rf = 1.4 else self.rf = 1 end
         if self:Active(self.name[2]) then self.qs = 1.3 else self.qs = 1 end
         if not self.Quiver then self:GetQuiverSpeed() end
-        self.as = 1 / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))  -- Updated Trueshot time
+        self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
 
         local time = GT()
-        if (self.next - time) > self.as + 0.1 and GetActionCooldown(self.tsSlot) == 0 then  -- Added 0.1s delay for autoshot
+        if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
             return
         end
@@ -124,6 +125,7 @@ function OBH:Runnomulti()
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
     if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
 
+    -- Prioritize Auto Shot
     if not IsCurrentAction(self.autoSlot) then
         UseAction(self.autoSlot)  -- Auto Shot
         return
@@ -133,10 +135,10 @@ function OBH:Runnomulti()
         if self:Active(self.name[1]) then self.rf = 1.4 else self.rf = 1 end
         if self:Active(self.name[2]) then self.qs = 1.3 else self.qs = 1 end
         if not self.Quiver then self:GetQuiverSpeed() end
-        self.as = 1 / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))  -- Updated Trueshot time
+        self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
 
         local time = GT()
-        if (self.next - time) > self.as + 0.1 and GetActionCooldown(self.tsSlot) == 0 then  -- Added 0.1s delay for autoshot
+        if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
             return
         end
