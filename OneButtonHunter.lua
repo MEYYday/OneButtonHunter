@@ -89,7 +89,7 @@ end
 OBH.rf = 1
 OBH.qs = 1
 OBH.as = 3
-OBH.ts = 1.3  -- Trueshot cast time
+OBH.ts = 1  -- Trueshot cast time
 OBH.tsSlot = nil  -- Trueshot action slot
 OBH.autoSlot = nil
 OBH.asSlot = nil
