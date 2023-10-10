@@ -97,7 +97,7 @@ OBH.asSlot = nil
 -- Add a flag for Auto Shot
 OBH.autoInProgress = false
 
-OBH.trueshotBuffer = 0.5  -- 0.5-second buffer
+OBH.trueshotBuffer = 1  -- 0.5-second buffer
 OBH.lastTrueShotTime = 0
 OBH.trueShotCooldown = 0.5  -- 0.5-second cooldown after Trueshot
 OBH.trueShotReady = true  -- Flag for Trueshot availability
@@ -140,6 +140,8 @@ function OBH:Runnomulti()
     if not OBH.trueShotReady and (currentTime - OBH.lastTrueShotTime) >= OBH.trueShotCooldown then
         OBH.trueShotReady = true
     end
+
+    local autoShotReady = (self.next and (self.next - currentTime) <= self.as)
     
     if not self.autoSlot then self.autoSlot = self:GetActionSlot(self.name[5]) end
     if not self.tsSlot then self.tsSlot = self:GetActionSlot("Trueshot") end
@@ -150,7 +152,7 @@ function OBH:Runnomulti()
         if not self.Quiver then self:GetQuiverSpeed() end
         self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
         
-        if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 and OBH.trueShotReady then
+        if (self.next - currentTime) > self.as and GetActionCooldown(self.tsSlot) == 0 and OBH.trueShotReady and not autoShotReady then
             CastSpellByName("Trueshot")
             OBH.lastTrueShotTime = currentTime
             OBH.trueShotReady = false
@@ -162,3 +164,4 @@ function OBH:Runnomulti()
         end
     end
 end
+
