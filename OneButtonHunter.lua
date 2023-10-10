@@ -103,11 +103,12 @@ function OBH:Run()
         if self:Active(self.name[1]) then self.rf = 1.4 else self.rf = 1 end
         if self:Active(self.name[2]) then self.qs = 1.3 else self.qs = 1 end
         if not self.Quiver then self:GetQuiverSpeed() end
-        self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
+        self.as = 1 / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1)) -- Trueshot cast time is 1s
 
         local time = GT()
         if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
+            self.next = time + UnitRangedDamage("player") -- reset the next autoshot time
             return
         end
         CastSpellByName(self.name[4])  -- Multi-Shot
@@ -127,11 +128,12 @@ function OBH:Runnomulti()
         if self:Active(self.name[1]) then self.rf = 1.4 else self.rf = 1 end
         if self:Active(self.name[2]) then self.qs = 1.3 else self.qs = 1 end
         if not self.Quiver then self:GetQuiverSpeed() end
-        self.as = self.ts / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1))
+        self.as = 1 / ((self.Quiver or 1) * (self.rf or 1) * (self.qs or 1)) -- Trueshot cast time is 1s
 
         local time = GT()
         if (self.next - time) > self.as and GetActionCooldown(self.tsSlot) == 0 then
             CastSpellByName("Trueshot")
+            self.next = time + UnitRangedDamage("player") -- reset the next autoshot time
             return
         end
     else
@@ -140,3 +142,5 @@ function OBH:Runnomulti()
         end
     end
 end
+
+
